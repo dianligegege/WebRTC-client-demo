@@ -1,4 +1,4 @@
-# live-fe-2
+# live-fe
 
 ## Project setup
 ```
