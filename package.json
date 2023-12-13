@@ -9,11 +9,13 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "video.js": "^8.6.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
+    "@types/video.js": "^7.3.56",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",
