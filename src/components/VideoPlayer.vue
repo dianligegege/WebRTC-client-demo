@@ -1,6 +1,6 @@
 <template>
   <div>
-    <video ref="videoPlayer" class="video-js"></video>
+    <video ref="videoPlayer" class="video-js vjs-video-box"></video>
   </div>
 </template>
 
@@ -42,6 +42,12 @@ onUnmounted(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import 'video.js/dist/video-js.css';
+
+.vjs-video-box {
+  width: 100vmin;
+  height: 56.25vmin;
+  max-width: 100%;
+}
 </style>
