@@ -1,15 +1,13 @@
 <template>
   <div>
-    <video ref="videoPlayer" class="video-js vjs-video-box"></video>
+    <video ref="videoPlayer" class="video-js vjs-video-box vjs-default-skin"></video>
   </div>
 </template>
 
 <script lang="ts" setup>
 import videojs from 'video.js';
 import type Player from 'video.js/dist/types/player';
-import {
-  onMounted, onUnmounted, ref,
-} from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps({
   options: {
@@ -25,13 +23,9 @@ const videoPlayer = ref<HTMLElement>();
 
 onMounted(() => {
   if (videoPlayer.value) {
-    player.value = videojs(
-      videoPlayer.value,
-      props.options,
-      () => {
-        player.value?.log('onPlayerReady', this);
-      },
-    );
+    player.value = videojs(videoPlayer.value, props.options, () => {
+      player.value?.log('onPlayerReady', this);
+    });
   }
 });
 
@@ -44,6 +38,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 @import 'video.js/dist/video-js.css';
+@import 'src/assets/styles/video.scss';
 
 .vjs-video-box {
   width: 100vmin;

@@ -26,5 +26,6 @@ module.exports = {
         tsx: 'never',
       },
     ],
+    'max-len': ['error', { code: 150 }],
   },
 };

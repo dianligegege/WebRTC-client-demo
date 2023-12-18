@@ -1,14 +1,13 @@
 <template>
   <div class="home">
-    <VideoPlayer
-      :options="options"
-    />
+    <VideoPlayer :options="options" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, onMounted, reactive } from 'vue';
 import VideoPlayer from '@/components/VideoPlayer.vue';
+import getMedia from '@/utils/media';
 
 export default defineComponent({
   name: 'HomeView',
@@ -25,6 +24,11 @@ export default defineComponent({
           type: 'video/mp4',
         },
       ],
+    });
+
+    onMounted(() => {
+      console.log('onMounted');
+      getMedia();
     });
 
     return {
