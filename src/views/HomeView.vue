@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive } from 'vue';
 import VideoPlayer from '@/components/VideoPlayer.vue';
-import getMedia from '@/utils/media';
+import { getMedia, getDevices } from '@/utils/media';
 
 export default defineComponent({
   name: 'HomeView',
@@ -29,6 +29,7 @@ export default defineComponent({
     onMounted(() => {
       console.log('onMounted');
       getMedia();
+      getDevices();
     });
 
     return {

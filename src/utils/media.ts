@@ -1,13 +1,20 @@
-export default function getMedia() {
-  console.log('getMedia');
-  const openMediaDevices = async (constraints: MediaStreamConstraints) => {
-    const fun = await navigator.mediaDevices.getUserMedia(constraints);
-    return fun;
+export function getMedia() {
+  const constraints = {
+    video: true,
+    audio: true,
   };
-  try {
-    const stream = openMediaDevices({ video: true, audio: true });
-    console.log('Got MediaStream:', stream);
-  } catch (error) {
-    console.error('Error accessing media devices.', error);
-  }
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then((stream) => {
+      console.log('Got MediaStream:', stream);
+    })
+    .catch((error) => {
+      console.error('Error accessing media devices.', error);
+    });
+}
+
+export function getDevices() {
+  navigator.mediaDevices.enumerateDevices()
+    .then((devices) => {
+      console.log('zl-devices', devices);
+    });
 }
