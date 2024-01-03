@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <video ref="videoPlayer" class="video-js vjs-video-box vjs-default-skin"></video>
-  </div>
+  <video ref="videoPlayer" class="video-js vjs-video-box vjs-default-skin"></video>
 </template>
 
 <script lang="ts" setup>
@@ -23,9 +21,17 @@ const videoPlayer = ref<HTMLElement>();
 
 onMounted(() => {
   if (videoPlayer.value) {
-    player.value = videojs(videoPlayer.value, props.options, () => {
-      player.value?.log('onPlayerReady', this);
-    });
+    player.value = videojs(
+      videoPlayer.value,
+      {
+        autoplay: false,
+        controls: true,
+        ...props.options,
+      },
+      () => {
+        player.value?.log('onPlayerReady', this);
+      },
+    );
   }
 });
 
@@ -41,8 +47,8 @@ onUnmounted(() => {
 @import 'src/assets/styles/video.scss';
 
 .vjs-video-box {
-  width: 100vmin;
-  height: 56.25vmin;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
 }
 </style>
