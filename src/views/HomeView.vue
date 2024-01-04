@@ -27,7 +27,6 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      console.log('onMounted');
       getMedia();
       getDevices();
     });

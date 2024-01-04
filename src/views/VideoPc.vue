@@ -1,17 +1,13 @@
 <template>
   <div class="video-wrap">
     <div class="local-video">
-      <video :id="lovalVideoId"></video>
-      <!-- <VideoPlayer :options="localOptions" :ref="refVideoLocal" /> -->
-    </div>
-    <div class="remote-video">
-      <!-- <VideoPlayer :options="remoteOptions" :ref="refVideoRemote" /> -->
+      <video :id="lovalVideoId" autoplay muted></video>
+      <video id="customVideo" playsinline autoplay muted></video>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-// import VideoPlayer from '@/components/VideoPlayer.vue';
 import CustomVideoPlayer from '@/utils/video';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import WebRTCClient from '@/utils/rtc';
@@ -19,55 +15,46 @@ import WebRTCClient from '@/utils/rtc';
 const lovalVideoId = 'localVideoId';
 
 const videoPlayerLocal = ref();
-// const refVideoRemote = ref();
+const stream = ref();
 
-const localOptions = {
-  sources: [
-    {
-      src: '/loki.mp4',
-      type: 'video/mp4',
-    },
-  ],
-};
-// const remoteOptions = reactive({});
-
-// const localVideoCanPlay = () => {
-//   const stream = refVideoLocal.value.captureStream();
-//   console.log('zl-stream', stream);
-// };
-
-const onPlayerReady = (e) => {
-  console.log('onPlayerReady', e);
-  const player = videoPlayerLocal.value.getOriginalPlayer();
-  console.log('zl-player', player);
-  videoPlayerLocal.value.getOriginalPlayer().muted(false);
+const getStream = async () => {
   try {
-    player.play();
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    console.log('zl-stream1.value', stream1);
+    const { videoElement } = videoPlayerLocal.value;
+    if (videoElement) {
+      videoElement.srcObject = stream1;
+    }
+    const customVideo = document.querySelector('#customVideo') as HTMLVideoElement;
+    if (customVideo) customVideo.srcObject = stream1;
   } catch (error) {
-    console.log('zl-error', error);
+    console.log('error', error);
   }
-  // videoPlayerLocal.value.play();
+};
+
+const onPlayerReady = async () => {
+  console.log('onPlayerReady');
+  await getStream();
+};
+
+const onPlay = () => {
+  console.log('onPlay');
+};
+
+const onError = (e) => {
+  console.log('e', e);
 };
 
 onMounted(() => {
   nextTick(() => {
     videoPlayerLocal.value = new CustomVideoPlayer({
       videoElementId: lovalVideoId,
-      customOptions: localOptions,
+      // customOptions: localOptions,
       onPlayerReady,
+      onPlay,
+      onError,
     });
-    // refVideoLocal.value.oncanPlay = localVideoCanPlay;
-    // // 本地
-    // const pcLocal = new WebRTCClient({
-    //   icecandidate: (e) => {
-    //     console.log('icecandidate', e);
-    //   },
-    //   track: (e) => {
-    //     console.log('track', e);
-    //   },
-    // });
   });
-  console.log('onMounted');
 });
 </script>
 
@@ -82,6 +69,12 @@ onMounted(() => {
     margin: 16px;
     width: 500px;
     height: 282px;
+  }
+
+  #customVideo {
+    width: 500px;
+    height: 300px;
+    border: 1px solid #ccc;
   }
 }
 </style>

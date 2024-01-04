@@ -16,6 +16,8 @@ interface Iprops {
 class CustomVideoPlayer {
   private player: Player;
 
+  public videoElement;
+
   constructor({
     videoElementId,
     customOptions,
@@ -31,6 +33,8 @@ class CustomVideoPlayer {
       ...customOptions,
     });
     this.player.addClass('video-js vjs-video-box vjs-default-skin');
+
+    this.videoElement = this.player.el().querySelector('video');
     if (onPlayerReady) this.player.on('ready', onPlayerReady);
     // 监听播放开始事件
     if (onPlay) this.player.on('play', onPlay);
