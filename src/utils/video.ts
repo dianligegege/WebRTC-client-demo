@@ -8,6 +8,7 @@ interface Iprops {
   customOptions?: any,
   onPlayerReady?: (e: any) => void,
   onPlay?: (e: any) => void,
+  onTimeupdate?: (e: any) => void,
   onPause?: (e: any) => void,
   onEnded?: (e: any) => void,
   onError?: (e: any) => void,
@@ -23,6 +24,7 @@ class CustomVideoPlayer {
     customOptions,
     onPlayerReady,
     onPlay,
+    onTimeupdate,
     onPause,
     onEnded,
     onError,
@@ -40,6 +42,7 @@ class CustomVideoPlayer {
     if (onPlay) this.player.on('play', onPlay);
     // 监听暂停事件
     if (onPause) this.player.on('pause', onPause);
+    if (onTimeupdate) this.player.on('timeupdate', onTimeupdate);
     // 监听结束事件
     if (onEnded) this.player.on('ended', onEnded);
     // 监听错误事件
