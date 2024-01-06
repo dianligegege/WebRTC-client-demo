@@ -20,6 +20,16 @@ const routes: Array<RouteRecordRaw> = [
     name: 'video-pc',
     component: () => import(/* webpackChunkName: "video-pc" */ '../views/VideoPc.vue'),
   },
+  {
+    path: '/audio-pc',
+    name: 'audio-pc',
+    component: () => import(/* webpackChunkName: "audio-pc" */ '../views/AudioPc.vue'),
+  },
+  {
+    path: '/share-pc',
+    name: 'share-pc',
+    component: () => import(/* webpackChunkName: "share-pc" */ '../views/SharePc.vue'),
+  },
 ];
 
 const router = createRouter({
