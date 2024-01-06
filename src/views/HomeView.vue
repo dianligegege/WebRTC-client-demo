@@ -37,3 +37,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.vjs-video-box {
+  width: 800px;
+  height: 450px;
+}
+</style>
