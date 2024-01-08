@@ -1,4 +1,8 @@
 <template>
+  <div class="btn-wrap">
+    <button @click="start">开始</button>
+    <button @click="close">关闭</button>
+  </div>
   <div class="video-wrap">
     <div class="local-video">
       <video :id="lovalVideoId" autoplay muted></video>
@@ -33,6 +37,7 @@ const pcLocal: any = ref();
 const pcRemote: any = ref();
 let pc1: any;
 let pc2: any;
+let localStream: any;
 
 function handleRtc() {
   pcLocal.value = new WebRTCClient({});
@@ -82,7 +87,7 @@ async function handlePlayer() {
 }
 
 async function handleStream() {
-  const localStream = await navigator.mediaDevices.getUserMedia({
+  localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true,
   });
@@ -90,21 +95,44 @@ async function handleStream() {
   if (localVideo) {
     localVideo.srcObject = localStream;
   }
-  localStream.getTracks().forEach((track) => pc1.addTrack(track, localStream));
+  localStream.getTracks().forEach((track: any) => pc1.addTrack(track, localStream));
 }
 
-onMounted(async () => {
+function close() {
+  if (localStream) {
+    localStream.getTracks().forEach((track: any) => {
+      track.stop();
+    });
+  }
+  if (pc1) pc1.close();
+  if (pc2) pc2.close();
+  pc1 = null;
+  pc2 = null;
+  pcLocal.value = null;
+  pcRemote.value = null;
+}
+
+function start() {
+  close();
   handleRtc();
   nextTick(async () => {
-    await handlePlayer();
     await handleStream();
     // 创建offer放在addTrack之后
     await createOffer();
   });
+}
+
+onMounted(async () => {
+  await handlePlayer();
 });
 </script>
 
 <style lang="scss">
+.btn-wrap {
+  button {
+    margin: 0 24px;
+  }
+}
 .video-wrap {
   display: flex;
   flex-direction: column;
