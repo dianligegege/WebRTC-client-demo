@@ -27,6 +27,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'socket-text',
     component: () => import(/* webpackChunkName: "socket-text" */ '../views/SocketText.vue'),
   },
+  {
+    path: '/socket-pc',
+    name: 'socket-pc',
+    component: () => import(/* webpackChunkName: "socket-pc" */ '../views/SocketPc.vue'),
+  },
 ];
 
 const router = createRouter({
