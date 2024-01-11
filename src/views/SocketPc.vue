@@ -7,9 +7,6 @@
     <div class="local-video">
       <video :id="lovalVideoId" autoplay muted></video>
     </div>
-    <!-- <div class="remote-video">
-      <video :id="remoteVideoId" autoplay muted></video>
-    </div> -->
   </div>
   <div>
     <h3>房间号：{{ roomId }}</h3>
@@ -53,11 +50,8 @@ const localOptions = {
   muted: true,
 };
 const lovalPlayer = ref();
-// const remotePlayer = ref();
 const pcLocal: any = ref();
-// const pcRemote: any = ref();
 let pc1: any;
-// let pc2: any;
 let localStream: any;
 
 async function handlePlayer() {
@@ -65,11 +59,6 @@ async function handlePlayer() {
     videoElementId: lovalVideoId,
     customOptions: localOptions,
   });
-  // remotePlayer.value = createPlayer({
-  //   videoElementId: remoteVideoId,
-  //   customOptions: localOptions,
-  // });
-  // remoteVideo = remotePlayer.value.el().querySelector('video') as HTMLVideoElement;
   localVideo = lovalPlayer.value.el().querySelector('video') as HTMLVideoElement;
 }
 
@@ -82,16 +71,7 @@ function handleRtc() {
     },
   });
 
-  // pcRemote.value = new WebRTCClient({
-  //   onTrack(e) {
-  //     if (e.streams.length > 0 && remoteVideo) {
-  //       [remoteVideo.srcObject] = e.streams;
-  //     }
-  //   },
-  // });
-
   pc1 = pcLocal.value?.pc;
-  // pc2 = pcRemote.value?.pc;
 
   pc1.addEventListener('icecandidate', async (e) => {
     if (e.candidate) {
@@ -102,34 +82,18 @@ function handleRtc() {
         type: 'ice',
         candidate: e.candidate,
       });
-      // await pcRemote.value?.addIceCandidate(e.candidate);
     }
   });
-
-  // pc2.addEventListener('icecandidate', async (e) => {
-  //   if (e.candidate) {
-  //     await pcLocal.value.addIceCandidate(e.candidate);
-  //   }
-  // });
 }
 
 async function createOffer() {
   const offer = await pcLocal.value?.createOffer();
   console.log('zl-createOffer-offer', offer);
-  // socket.emit('toSignal', {
-  //   roomId,
-  //   userName,
-  //   type: 'sdp',
-  //   sdp: offer,
-  // });
   socket.emit('toOffer', {
     roomId,
     userName,
     offer,
   });
-  // await pcRemote.value?.saveRemoteDescription(offer);
-  // const answer = await pcRemote.value?.createAnswer();
-  // await pcLocal.value?.saveRemoteDescription(answer);
 }
 
 async function handleStream() {
@@ -138,9 +102,6 @@ async function handleStream() {
     audio: true,
   });
 
-  // if (localVideo) {
-  //   localVideo.srcObject = localStream;
-  // }
   localStream.getTracks().forEach((track: any) => pc1.addTrack(track, localStream));
 }
 
@@ -151,11 +112,8 @@ function close() {
     });
   }
   if (pc1) pc1.close();
-  // if (pc2) pc2.close();
   pc1 = null;
-  // pc2 = null;
   pcLocal.value = null;
-  // pcRemote.value = null;
 }
 
 function sendMessage() {
