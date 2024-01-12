@@ -1,46 +1,57 @@
 <template>
-  <div class="home">
-    <VideoPlayer :options="options" />
+  <div class="directory">
+    <h2>项目目录</h2>
+    <ul>
+      <li v-for="route in routes" :key="route.path">
+        <router-link :to="route.path">{{ route.name }}</router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive } from 'vue';
-import VideoPlayer from '@/components/VideoPlayer.vue';
-import { getMedia, getDevices } from '@/utils/media';
-
-export default defineComponent({
-  name: 'HomeView',
-  components: {
-    VideoPlayer,
-  },
-  setup() {
-    const options = reactive({
-      autoplay: true,
-      controls: true,
-      sources: [
-        {
-          src: '/loki.mp4',
-          type: 'video/mp4',
-        },
-      ],
-    });
-
-    onMounted(() => {
-      getMedia();
-      getDevices();
-    });
-
+<script>
+export default {
+  data() {
     return {
-      options,
+      routes: [
+        { path: '/', name: '首页' },
+        { path: '/video-pc', name: '视频本地传输' },
+        { path: '/audio-pc', name: '音频本地传输' },
+        { path: '/share-pc', name: '分享本地传输' },
+        { path: '/socket-text', name: 'socket传输文本' },
+        { path: '/socket-pc', name: '视频远程传输' },
+      ],
     };
   },
-});
+};
 </script>
 
-<style lang="scss" scoped>
-.vjs-video-box {
-  width: 800px;
-  height: 450px;
+<style scoped>
+.directory {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.directory h2 {
+  margin-bottom: 10px;
+}
+
+.directory ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.directory li {
+  margin-bottom: 5px;
+}
+
+.directory li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.directory li a:hover {
+  text-decoration: underline;
 }
 </style>
