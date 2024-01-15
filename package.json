@@ -17,6 +17,7 @@
     "webrtc-adapter": "^8.2.3"
   },
   "devDependencies": {
+    "@types/node": "^20.11.2",
     "@types/video.js": "^7.3.56",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",

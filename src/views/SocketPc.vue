@@ -35,7 +35,8 @@ interface Message {
 // socket 相关
 const roomId = 'room2';
 const userName = `user${Math.floor(Math.random() * 100)}`;
-const socket = io('https://10.17.25.252:3000');
+
+const socket = io('https://192.168.1.109:3000');
 const messages = ref<Message[]>([]);
 const newMessage = ref('');
 
