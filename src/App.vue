@@ -26,8 +26,6 @@ const routes = [
 
 const isActiveRoute = (path: string) => {
   const route = useRoute();
-  console.log('zl-route', route.path);
-  console.log('zl-path', path);
   return route.path === path;
 };
 </script>
