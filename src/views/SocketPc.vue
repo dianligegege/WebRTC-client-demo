@@ -36,7 +36,7 @@ interface Message {
 const roomId = 'room2';
 const userName = `user${Math.floor(Math.random() * 100)}`;
 
-const socket = io('https://192.168.1.109:3000');
+const socket = io('https://web-rtc-server-demo-pp39sv8s7-dianligegeges-projects.vercel.app/');
 const messages = ref<Message[]>([]);
 const newMessage = ref('');
 
