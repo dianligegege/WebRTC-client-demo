@@ -25,7 +25,7 @@ const roomId = 'room1';
 // 随机username
 const userName = `user${Math.floor(Math.random() * 100)}`;
 
-const socket = io('https://10.17.25.252:3000');
+const socket = io('https://web-rtc-server-demo-pp39sv8s7-dianligegeges-projects.vercel.app/');
 const messages = ref<Message[]>([]);
 const newMessage = ref('');
 
