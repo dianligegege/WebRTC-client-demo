@@ -22,6 +22,7 @@ const routes = [
   { path: '/share-pc', name: '分享本地传输' },
   { path: '/socket-text', name: 'socket传输文本' },
   { path: '/socket-pc', name: '视频远程传输' },
+  { path: '/api-test', name: '接口测试' },
 ];
 
 const isActiveRoute = (path: string) => {
