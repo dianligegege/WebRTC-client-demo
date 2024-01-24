@@ -5,7 +5,7 @@
       <button @click="startRecording">Start Recording</button>
       <button @click="stopRecording">Stop Recording</button>
     </div>
-    <!-- <h2>Pitch: {{ pitch }}</h2> -->
+    <h2>Pitch: {{ pitch }}</h2>
     <canvas id="canvas1" ref="canvas"></canvas>
     <canvas id="canvas3" ref="canvas3"></canvas>
     <div class="canvas-wrap">
@@ -35,7 +35,7 @@ const startTime = ref(null);
 const canvasWrapDom = ref(null);
 
 // 获取音调和音符
-function frequencyToNote(frequency, referenceFrequency = 440, key = 'C', scaleName = 'naturalMinor') {
+function frequencyToNote(frequency, referenceFrequency = 440, key = 'C', scaleName = 'major') {
   // 定义标准音名和对应的频率（A4为440Hz）
   const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
   // 定义常见音阶的音程模式
@@ -121,6 +121,13 @@ function autoCorrelate(buf, sampleRate) {
   return -1;
 }
 
+// 获取频率
+function getFrequencyFromFFT(fft, sampleRate) {
+  const peak = fft.reduce((iMax, x, i, arr) => (x > arr[iMax] ? i : iMax), 0);
+  const freq = peak * (sampleRate / fft.length);
+  return freq;
+}
+
 let lastX = 0;
 const drawNote = (time, pitchVal, noteName) => {
   // console.log('zl-noteName', noteName);
@@ -132,8 +139,10 @@ const drawNote = (time, pitchVal, noteName) => {
   // const x = (time - startTime.value) / 1000; // convert time to seconds
   const x = lastX + itemWidth;
   lastX += itemWidth;
-  const y = pitchVal / 10;
-  console.log('zl-x-y', x, y);
+  // 音调的Y轴坐标，从下向上排列
+  // const y = (pitchVal / 100) * 200;
+  const y = 200 - pitchVal / 10 - 2;
+  console.log('x-y', x, y);
   canvasContext2.value.fillRect(x, y, itemWidth, 2); // draw a 1x1 pixel at (x, y)
   // 在块上写上音符noteName
   canvasContext2.value.font = '10px serif';
@@ -181,7 +190,8 @@ const updatePitch = () => {
   // Calculate pitch here using the dataArray
   // pitch.value = autoCorrelate(dataArray.value, sampleRate);
   // 你需要确保你有正确的音频数据和分析器
-  pitch.value = autoCorrelate(dataArray.value, source.value.context.sampleRate);
+  // pitch.value = autoCorrelate(dataArray2.value, source.value.context.sampleRate);
+  pitch.value = getFrequencyFromFFT(dataArray2.value, source.value.context.sampleRate);
   // console.log(`Detected pitch: ${pitch.value}`);
   // ...
   if (pitch.value !== -1) {
