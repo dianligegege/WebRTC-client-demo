@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
@@ -36,6 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/api-test',
     name: 'api-test',
     component: () => import(/* webpackChunkName: "api-test" */ '../views/ApiTest.vue'),
+  },
+  {
+    path: '/audio-pitch',
+    name: 'audio-pitch',
+    component: () => import(/* webpackChunkName: "audio-pitch" */ '../views/AudioPitch.vue'),
   },
 ];
 
