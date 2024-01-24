@@ -9,7 +9,7 @@
     <canvas id="canvas1" ref="canvas"></canvas>
     <canvas id="canvas3" ref="canvas3"></canvas>
     <div class="canvas-wrap">
-      <canvas width="600" height="200" id="canvas2" ref="canvas2"></canvas>
+      <canvas width="600" height="300" id="canvas2" ref="canvas2"></canvas>
     </div>
   </div>
 </template>
@@ -129,10 +129,10 @@ function getFrequencyFromFFT(fft, sampleRate) {
 }
 
 let lastX = 0;
-const drawNote = (time, pitchVal, noteName) => {
+const drawNote = (time, pitchVal, noteName, octave) => {
   // console.log('zl-noteName', noteName);
   // console.log('zl-pitchVal', pitchVal);
-  const itemWidth = 10;
+  const itemWidth = 20;
   // canvasContext2.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
 
   // for (let i = 0; i < audioData.length; i++) {
@@ -141,12 +141,13 @@ const drawNote = (time, pitchVal, noteName) => {
   lastX += itemWidth;
   // 音调的Y轴坐标，从下向上排列
   // const y = (pitchVal / 100) * 200;
-  const y = 200 - pitchVal / 10 - 2;
+  const y = 300 - pitchVal / 20 - 12;
   console.log('x-y', x, y);
   canvasContext2.value.fillRect(x, y, itemWidth, 2); // draw a 1x1 pixel at (x, y)
   // 在块上写上音符noteName
   canvasContext2.value.font = '10px serif';
-  canvasContext2.value.fillText(noteName, x, y - 10);
+  canvasContext2.value.fillText(`${noteName} ${octave}`, x, y - 8);
+  canvasContext2.value.fillText(pitchVal, x, y + 12);
   // }
   // x大于1000时，增加canvas宽度并且自动滚动到最右侧
   if (x > canvas2.value.width) {
@@ -199,7 +200,7 @@ const updatePitch = () => {
     // console.log('zl-pitch.value', pitch.value);
     // console.log('zl-noteName', noteName);
     // console.log('zl-octave', octave);
-    drawNote(Date.now(), pitch.value, noteName);
+    drawNote(Date.now(), pitch.value, noteName, octave);
   }
 
   // Draw the waveform on the canvas
