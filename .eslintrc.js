@@ -28,5 +28,7 @@ module.exports = {
     ],
     'max-len': ['error', { code: 150 }],
     'object-curly-newline': ['error', { consistent: true }],
+    camelcase: 'off',
+    'no-plusplus': 'off',
   },
 };

@@ -14,8 +14,9 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import { routes } from '@/router/index';
 
-const routes = [
+const routes1 = [
   { path: '/', name: '首页' },
   { path: '/video-pc', name: '视频本地传输' },
   { path: '/audio-pc', name: '音频本地传输' },

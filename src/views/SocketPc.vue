@@ -38,7 +38,11 @@ const userName = `user${Math.floor(Math.random() * 100)}`;
 
 // const domain = 'https://10.17.25.252:3001';
 const domain = 'https://web-rtc-server-demo.vercel.app';
-const socket = io(domain);
+// const domain = 'https://web-rtc-server-demo-bfelxazfe-dianligegeges-projects.vercel.app';
+
+const socket = io(domain, {
+  path: '/api/socket',
+});
 const messages = ref<Message[]>([]);
 const newMessage = ref('');
 
