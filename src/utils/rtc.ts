@@ -19,7 +19,13 @@ export default class WebRTCClient {
     onTrack,
   }: IProp) {
     this.isLocal = clientType === 'local';
-    this.pc = new RTCPeerConnection();
+    this.pc = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: 'stun:stun.voipbuster.com ',
+        },
+      ],
+    });
     if (onIcecandidate) this.onIcecandidate(onIcecandidate);
     if (onIceconnectionstatechange) this.onIceconnectionstatechange(onIceconnectionstatechange);
     if (onTrack) this.onTrack(onTrack);
