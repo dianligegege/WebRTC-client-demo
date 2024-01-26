@@ -291,12 +291,6 @@ onMounted(() => {
 onUnmounted(() => {
   stopRecording();
 });
-
-// return {
-//   pitch,
-//   startRecording,
-//   stopRecording,
-// };
 </script>
 
 <style lang="scss">
