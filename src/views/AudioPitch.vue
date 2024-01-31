@@ -130,8 +130,6 @@ function getFrequencyFromFFT(fft, sampleRate) {
 
 let lastX = 0;
 const drawNote = (time, pitchVal, noteName, octave) => {
-  // console.log('zl-noteName', noteName);
-  // console.log('zl-pitchVal', pitchVal);
   const itemWidth = 20;
   // canvasContext2.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
 
