@@ -83,7 +83,51 @@ function frequencyToNote(frequency, referenceFrequency = 440, key = 'C', scaleNa
   return { noteName, octave };
 }
 
-// 获取音高
+// YIN 算法是一种用于音频信号基频估计的算法，它是基于自相关函数的改进
+function computeYin(buffer, sampleRate) {
+  const halfBufferSize = buffer.length / 2;
+  const probabilityThreshold = 0.05;
+  let tauEstimate = -1;
+  let smallestDiff = -1;
+  const yinBuffer = new Float32Array(halfBufferSize);
+
+  // Step 1: Compute the difference function
+  for (let tau = 0; tau < halfBufferSize; tau++) {
+    for (let i = 0; i < halfBufferSize; i++) {
+      const delta = buffer[i] - buffer[i + tau];
+      yinBuffer[tau] += delta * delta;
+    }
+  }
+
+  // Step 2: Compute the cumulative mean normalized difference function
+  yinBuffer[0] = 1;
+  for (let tau = 1; tau < halfBufferSize; tau++) {
+    yinBuffer[tau] *= tau / yinBuffer[0]; // Normalize the result
+    if (yinBuffer[tau] < probabilityThreshold) {
+      if (tauEstimate === -1 || yinBuffer[tau] < smallestDiff) {
+        tauEstimate = tau;
+        smallestDiff = yinBuffer[tau];
+      }
+    }
+  }
+
+  // Step 3: Interpolate the shift value (tau) to improve the pitch estimate.
+  if (tauEstimate !== -1) {
+    let betterTau = tauEstimate;
+    if (tauEstimate > 0 && tauEstimate < halfBufferSize - 1) {
+      const s0 = yinBuffer[tauEstimate - 1];
+      const s1 = yinBuffer[tauEstimate];
+      const s2 = yinBuffer[tauEstimate + 1];
+      betterTau += (0.5 * (s2 - s0)) / (2.0 * s1 - s2 - s0);
+    }
+    return sampleRate / betterTau;
+  }
+
+  // If no pitch found, return -1.
+  return -1;
+}
+
+// 自相关法获取音高，传入时域数据
 function autoCorrelate(buf, sampleRate) {
   const SIZE = buf.length;
   const GOOD_ENOUGH_CORRELATION = 0.9;
@@ -197,11 +241,33 @@ const draw = () => {
 const updatePitch = () => {
   draw();
 
+  // const threshold = 20;
+  // let baseFrequency = null;
+  // const harmonics = [];
+  // for (let i = 0; i < dataArray2.value.length; i++) {
+  //   if (dataArray2.value[i] > threshold) {
+  //     // threshold 是你设定的阈值
+  //     if (baseFrequency === null) {
+  //       baseFrequency = (i * audioContext.value.sampleRate) / analyser.value.fftSize;
+  //     } else {
+  //       const harmonicFrequency = (i * audioContext.value.sampleRate) / analyser.value.fftSize;
+  //       harmonics.push(harmonicFrequency);
+  //     }
+  //   }
+  // }
+  // if (baseFrequency !== 0) {
+  //   console.log('zl-baseFrequency', baseFrequency);
+  //   console.log('zl-harmonics', harmonics);
+  // }
+
   analyser.value.getByteTimeDomainData(dataArray.value);
   // Calculate pitch here using the dataArray
   // pitch.value = autoCorrelate(dataArray.value, sampleRate);
   // 你需要确保你有正确的音频数据和分析器
   pitch2.value = autoCorrelate(dataArray.value, source.value.context.sampleRate);
+  // pitch2.value = computeYin(dataArray.value, source.value.context.sampleRate);
+  // console.log('zl-pitch2.value', pitch2.value);
+
   pitch.value = getFrequencyFromFFT(dataArray2.value, source.value.context.sampleRate);
   // console.log(`Detected pitch: ${pitch.value}`);
   // ...
@@ -262,6 +328,13 @@ const startRecording = () => {
       // 使用 `audioContext.createMediaStreamSource` 方法创建一个 MediaStreamAudioSourceNode 对象，
       // 这个对象表示来自 MediaStream 的音频源。
       source.value = audioContext.value.createMediaStreamSource(stream);
+
+      // 带通滤波
+      const filter = audioContext.value.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 440; // Center frequency
+      filter.Q.value = 440 / 200; // Q = center frequency / bandwidth
+
       // 使用 `source.connect` 方法将音频源连接到分析器，这样分析器就可以接收并分析音频数据了。
       source.value.connect(analyser.value);
 
