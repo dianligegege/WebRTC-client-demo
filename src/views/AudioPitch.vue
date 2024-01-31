@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h1>Microphone Pitch</h1>
     <div>
       <button @click="startRecording">Start Recording</button>
       <button @click="stopRecording">Stop Recording</button>
     </div>
-    <h2>Pitch: {{ pitch }}</h2>
+    <h3>频域Pitch: {{ pitch }}</h3>
+    <h3>时域Pitch: {{ pitch2 }}</h3>
     <canvas id="canvas1" ref="canvas"></canvas>
     <canvas id="canvas3" ref="canvas3"></canvas>
     <div class="canvas-wrap">
@@ -17,7 +17,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 
-const pitch = ref(null);
+const pitch = ref(null); // 频域获取的音高
+const pitch2 = ref(null); // 时域获取的音高
 const mediaStream = ref(null);
 const audioContext = ref(null);
 const analyser = ref(null);
@@ -33,6 +34,16 @@ const canvasContext2 = ref(null);
 const source = ref(null);
 const startTime = ref(null);
 const canvasWrapDom = ref(null);
+
+// 获取音名的函数
+function getNoteName(frequency) {
+  const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  const semitonesFromA4 = 12 * Math.log2(frequency / 440);
+  const noteNumber = Math.round(semitonesFromA4) + 57; // A4 是 MIDI 中的第 57 个音符
+  const noteName = noteNames[noteNumber % 12];
+  const octave = Math.floor(noteNumber / 12);
+  return noteName + octave;
+}
 
 // 获取音调和音符
 function frequencyToNote(frequency, referenceFrequency = 440, key = 'C', scaleName = 'major') {
@@ -111,12 +122,12 @@ function autoCorrelate(buf, sampleRate) {
       }
     } else if (foundGoodCorrelation) {
       const shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];
-      return sampleRate / (best_offset + 8 * shift);
+      return Math.floor(sampleRate / (best_offset + 8 * shift));
     }
     lastCorrelation = correlation;
   }
   if (best_correlation > 0.01) {
-    return sampleRate / best_offset;
+    return Math.floor(sampleRate / best_offset);
   }
   return -1;
 }
@@ -129,8 +140,10 @@ function getFrequencyFromFFT(fft, sampleRate) {
 }
 
 let lastX = 0;
-const drawNote = (time, pitchVal, noteName, octave) => {
+const drawNote = (time, pitchVal, noteName, type) => {
   const itemWidth = 20;
+  // type = 'time' 时画笔为绿色，type = 'frequency' 时画笔为红色
+  canvasContext2.value.fillStyle = type === 'time' ? 'green' : 'red';
   // canvasContext2.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
 
   // for (let i = 0; i < audioData.length; i++) {
@@ -140,11 +153,10 @@ const drawNote = (time, pitchVal, noteName, octave) => {
   // 音调的Y轴坐标，从下向上排列
   // const y = (pitchVal / 100) * 200;
   const y = 300 - pitchVal / 20 - 12;
-  console.log('x-y', x, y);
   canvasContext2.value.fillRect(x, y, itemWidth, 2); // draw a 1x1 pixel at (x, y)
   // 在块上写上音符noteName
   canvasContext2.value.font = '10px serif';
-  canvasContext2.value.fillText(`${noteName} ${octave}`, x, y - 8);
+  canvasContext2.value.fillText(`${noteName}`, x, y - 8);
   canvasContext2.value.fillText(pitchVal, x, y + 12);
   // }
   // x大于1000时，增加canvas宽度并且自动滚动到最右侧
@@ -189,16 +201,17 @@ const updatePitch = () => {
   // Calculate pitch here using the dataArray
   // pitch.value = autoCorrelate(dataArray.value, sampleRate);
   // 你需要确保你有正确的音频数据和分析器
-  // pitch.value = autoCorrelate(dataArray2.value, source.value.context.sampleRate);
+  pitch2.value = autoCorrelate(dataArray.value, source.value.context.sampleRate);
   pitch.value = getFrequencyFromFFT(dataArray2.value, source.value.context.sampleRate);
   // console.log(`Detected pitch: ${pitch.value}`);
   // ...
-  if (pitch.value !== -1) {
-    const { noteName, octave } = frequencyToNote(pitch.value);
-    // console.log('zl-pitch.value', pitch.value);
-    // console.log('zl-noteName', noteName);
-    // console.log('zl-octave', octave);
-    drawNote(Date.now(), pitch.value, noteName, octave);
+  if (pitch.value > 0) {
+    const noteName = getNoteName(pitch.value);
+    drawNote(Date.now(), pitch.value, noteName, 'time');
+  }
+  if (pitch2.value > 0) {
+    const noteName = getNoteName(pitch2.value);
+    drawNote(Date.now(), pitch2.value, noteName, 'frequency');
   }
 
   // Draw the waveform on the canvas
